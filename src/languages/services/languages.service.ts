@@ -1,29 +1,27 @@
 import { Injectable } from '@nestjs/common';
 import { SUPPORTED_LANGUAGES, FRAMEWORK_CONFIGS } from '../constants/language.constants';
-import { BuildService } from '../../builds/builds.service';
 import { ConfigService } from '@nestjs/config';
 import { LanguageConfig } from '../interfaces/language-config.interface';
 
 @Injectable()
 export class LanguagesService {
   constructor(
-    private readonly buildService: BuildService,
     private readonly configService: ConfigService,
   ) {}
 
   getSupportedLanguages() {
     return Object.keys(SUPPORTED_LANGUAGES).map(key => ({
       id: key,
-      name: SUPPORTED_LANGUAGES[key].name,
-      versions: SUPPORTED_LANGUAGES[key].versions,
+      name: SUPPORTED_LANGUAGES[key as keyof typeof SUPPORTED_LANGUAGES].name,
+      versions: SUPPORTED_LANGUAGES[key as keyof typeof SUPPORTED_LANGUAGES].versions,
     }));
   }
 
   getSupportedFrameworks() {
     return Object.keys(FRAMEWORK_CONFIGS).map(key => ({
       id: key,
-      name: FRAMEWORK_CONFIGS[key].name,
-      language: FRAMEWORK_CONFIGS[key].language,
+      name: FRAMEWORK_CONFIGS[key as keyof typeof FRAMEWORK_CONFIGS].name,
+      language: FRAMEWORK_CONFIGS[key as keyof typeof FRAMEWORK_CONFIGS].language,
     }));
   }
 
@@ -44,20 +42,20 @@ export class LanguagesService {
   async generateDockerfile(config: LanguageConfig): Promise<string> {
     const { language, version, framework } = config;
     
-    if (framework && FRAMEWORK_CONFIGS[framework]) {
-      const frameworkConfig = FRAMEWORK_CONFIGS[framework];
+    if (framework && FRAMEWORK_CONFIGS[framework as keyof typeof FRAMEWORK_CONFIGS]) {
+      const frameworkConfig = FRAMEWORK_CONFIGS[framework as keyof typeof FRAMEWORK_CONFIGS];
       return this.generateFrameworkDockerfile(frameworkConfig, version);
     }
     
-    if (SUPPORTED_LANGUAGES[language]) {
-      return SUPPORTED_LANGUAGES[language].template.replace('{{version}}', version);
+    if (SUPPORTED_LANGUAGES[language as keyof typeof SUPPORTED_LANGUAGES]) {
+      return SUPPORTED_LANGUAGES[language as keyof typeof SUPPORTED_LANGUAGES].template.replace('{{version}}', version);
     }
     
     throw new Error(`Unsupported language: ${language}`);
   }
 
   private generateFrameworkDockerfile(frameworkConfig: any, version: string): string {
-    const languageConfig = SUPPORTED_LANGUAGES[frameworkConfig.language];
+    const languageConfig = SUPPORTED_LANGUAGES[frameworkConfig.language as keyof typeof SUPPORTED_LANGUAGES];
     let dockerfile = languageConfig.template.replace('{{version}}', version);
     
     // Add framework-specific commands

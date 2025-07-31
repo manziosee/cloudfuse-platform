@@ -15,6 +15,7 @@ import { BuildsModule } from '../src/builds/builds.module';
 import { ContainersModule } from '@containers/containers.module';
 import { HealthModule } from '../src/health/health.module';
 import { LanguagesModule } from '@languages/module/languages.module';
+import { CommonModule } from '@common/common.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
@@ -33,8 +34,12 @@ import { join } from 'path';
       imports: [ConfigModule],
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        ttl: config.get('THROTTLE_TTL', 60),
-        limit: config.get('THROTTLE_LIMIT', 100),
+        throttlers: [
+          {
+            ttl: Number(config.get('THROTTLE_TTL', 60)),
+            limit: Number(config.get('THROTTLE_LIMIT', 100)),
+          },
+        ],
       }),
     }),
     ScheduleModule.forRoot(),
@@ -44,6 +49,7 @@ import { join } from 'path';
       serveRoot: '/api/swagger-static',
     }),
     TerminusModule,
+    CommonModule,
     AuthModule,
     UsersModule,
     AppsModule,

@@ -7,7 +7,7 @@ export class LanguageConfigDto {
     description: 'Programming language',
   })
   @IsString()
-  language: string;
+  language!: string;
 
   @ApiProperty({
     example: '18',

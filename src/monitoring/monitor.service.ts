@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { HealthCheckResult } from '@nestjs/terminus';
 import { KubernetesService } from '../containers/kubernetes.service'; 
 import { Deployment } from '../deployments/entities/deployment.entity'; // Adjust the import path as necessary
-// Adjust the import path as necessary
 
 @Injectable()
 export class MonitorService {
@@ -34,8 +33,11 @@ export class MonitorService {
       throw new Error('Deployment not found');
     }
 
-    return this.kubernetesService.getDeploymentMetrics(
-      deployment.metadata.deploymentName,
-    );
+    const deploymentName = deployment.metadata?.deploymentName;
+    if (!deploymentName) {
+      throw new Error('Deployment name is missing');
+    }
+
+    return this.kubernetesService.getDeploymentMetrics(deploymentName);
   }
 }

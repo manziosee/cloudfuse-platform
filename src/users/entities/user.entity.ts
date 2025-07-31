@@ -16,37 +16,45 @@ export class User {
     description: 'User ID',
   })
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @ApiProperty({
     example: 'user@example.com',
     description: 'User email address',
   })
   @Column({ unique: true })
-  email: string;
+  email!: string;
 
   @Column()
-  password: string;
+  password!: string;
 
   @ApiProperty({
     example: 'John Doe',
     description: 'User full name',
   })
   @Column()
-  name: string;
+  name!: string;
+
+  @ApiProperty({
+    example: 'supabase-user-id',
+    description: 'Supabase user ID',
+    required: false,
+  })
+  @Column({ nullable: true })
+  supabaseId?: string;
 
   @ApiProperty({
     description: 'User creation date',
   })
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @ApiProperty({
     description: 'User last update date',
   })
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 
   @OneToMany(() => App, (app) => app.user)
-  apps: App[];
+  apps!: App[];
 }

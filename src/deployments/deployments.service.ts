@@ -19,7 +19,8 @@ export class DeploymentsService {
     appId: string,
     user: User,
   ): Promise<Deployment> {
-    // Implementation here...
+    // TODO: Implement actual creation logic
+    throw new Error('Not implemented');
   }
 
   async findAll(options: FindManyOptions<Deployment>) {
@@ -32,7 +33,7 @@ export class DeploymentsService {
     return {
       results,
       total,
-      page: options.skip / options.take + 1,
+      page: options.skip && options.take ? options.skip / options.take + 1 : 1,
       limit: options.take,
     };
   }
@@ -52,7 +53,10 @@ export class DeploymentsService {
 
   async getLogs(id: string, userId: string) {
     const deployment = await this.findOne(id, userId);
-    const { deploymentName } = deployment.metadata;
+    const deploymentName = deployment.metadata?.deploymentName;
+    if (!deploymentName) {
+      throw new NotFoundException('Deployment name is missing');
+    }
     const logs = await this.kubernetesService.getPodLogs(deploymentName);
 
     return {
@@ -63,7 +67,10 @@ export class DeploymentsService {
 
   async restart(id: string, userId: string): Promise<Deployment> {
     const deployment = await this.findOne(id, userId);
-    const { deploymentName } = deployment.metadata;
+    const deploymentName = deployment.metadata?.deploymentName;
+    if (!deploymentName) {
+      throw new NotFoundException('Deployment name is missing');
+    }
     await this.kubernetesService.restartDeployment(deploymentName);
 
     return this.deploymentsRepository.save({
@@ -75,7 +82,10 @@ export class DeploymentsService {
 
   async scale(id: string, replicas: number, userId: string): Promise<Deployment> {
     const deployment = await this.findOne(id, userId);
-    const { deploymentName } = deployment.metadata;
+    const deploymentName = deployment.metadata?.deploymentName;
+    if (!deploymentName) {
+      throw new NotFoundException('Deployment name is missing');
+    }
     await this.kubernetesService.scaleDeployment(deploymentName, replicas);
 
     return this.deploymentsRepository.save({
