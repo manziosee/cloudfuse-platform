@@ -5,19 +5,19 @@ import { User } from '@users/entities/user.entity';
 @Entity()
 export class Deployment {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column()
-  version: string;
+  version!: string;
 
   @Column({ default: 'pending' })
-  status: 'pending' | 'building' | 'active' | 'failed';
+  status!: 'pending' | 'building' | 'active' | 'failed';
 
   @Column({ nullable: true })
-  url: string;
+  url!: string;
 
   @Column('jsonb', { nullable: true })
-  metadata: {
+  metadata!: {
     imageName?: string;
     deploymentName?: string;
     serviceName?: string;
@@ -30,14 +30,14 @@ export class Deployment {
   };
 
   @ManyToOne(() => App, (app) => app.deployments)
-  app: App;
+  app!: App;
 
   @ManyToOne(() => User)
-  user: User;
+  user!: User;
 
   @CreateDateColumn()
-  createdAt: Date;
+  createdAt!: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updatedAt!: Date;
 }

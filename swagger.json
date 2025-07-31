@@ -1,0 +1,557 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CloudFuse API",
+    "description": "Multi-language PaaS Platform API documentation",
+    "version": "1.0",
+    "contact": {
+      "name": "CloudFuse Team",
+      "email": "support@cloudfuse.com"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000",
+      "description": "Development server"
+    },
+    {
+      "url": "https://api.cloudfuse.com",
+      "description": "Production server"
+    }
+  ],
+  "paths": {
+    "/api/auth/login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User login",
+        "description": "Authenticate user with email and password",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "access_token": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                    },
+                    "user": {
+                      "type": "object",
+                      "properties": {
+                        "id": {
+                          "type": "string",
+                          "example": "123e4567-e89b-12d3-a456-426614174000"
+                        },
+                        "email": {
+                          "type": "string",
+                          "example": "user@example.com"
+                        },
+                        "name": {
+                          "type": "string",
+                          "example": "John Doe"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid credentials"
+          }
+        }
+      }
+    },
+    "/api/auth/register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "User registration",
+        "description": "Register a new user account",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "format": "email",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password123"
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "John Doe"
+                  }
+                },
+                "required": [
+                  "email",
+                  "password",
+                  "name"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          },
+          "400": {
+            "description": "Invalid input data"
+          }
+        }
+      }
+    },
+    "/api/apps": {
+      "get": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Get all applications",
+        "description": "Retrieve all applications for the authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of applications",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/App"
+                      }
+                    },
+                    "total": {
+                      "type": "number",
+                      "example": 5
+                    },
+                    "page": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "limit": {
+                      "type": "number",
+                      "example": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Applications"
+        ],
+        "summary": "Create new application",
+        "description": "Create a new application",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAppDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Application created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/App"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/deployments": {
+      "get": {
+        "tags": [
+          "Deployments"
+        ],
+        "summary": "Get all deployments",
+        "description": "Retrieve all deployments for the authenticated user",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of deployments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "results": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Deployment"
+                      }
+                    },
+                    "total": {
+                      "type": "number",
+                      "example": 3
+                    },
+                    "page": {
+                      "type": "number",
+                      "example": 1
+                    },
+                    "limit": {
+                      "type": "number",
+                      "example": 10
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Deployments"
+        ],
+        "summary": "Create new deployment",
+        "description": "Create a new deployment for an application",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateDeploymentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Deployment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Deployment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/containers": {
+      "get": {
+        "tags": [
+          "Containers"
+        ],
+        "summary": "Get all containers",
+        "description": "Retrieve all containers",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of containers",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Container"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/languages": {
+      "get": {
+        "tags": [
+          "Languages"
+        ],
+        "summary": "Get supported languages",
+        "description": "Retrieve list of supported programming languages",
+        "responses": {
+          "200": {
+            "description": "List of supported languages",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "id": {
+                        "type": "string",
+                        "example": "NODE"
+                      },
+                      "name": {
+                        "type": "string",
+                        "example": "Node.js"
+                      },
+                      "versions": {
+                        "type": "array",
+                        "items": {
+                          "type": "string"
+                        },
+                        "example": [
+                          "16",
+                          "18",
+                          "20"
+                        ]
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
+        "description": "JWT token for authentication"
+      }
+    },
+    "schemas": {
+      "App": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "example": "My App"
+          },
+          "description": {
+            "type": "string",
+            "example": "A sample application"
+          },
+          "repositoryUrl": {
+            "type": "string",
+            "example": "https://github.com/user/my-app"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateAppDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "example": "My App"
+          },
+          "description": {
+            "type": "string",
+            "example": "A sample application"
+          },
+          "repositoryUrl": {
+            "type": "string",
+            "example": "https://github.com/user/my-app"
+          }
+        },
+        "required": [
+          "name"
+        ]
+      },
+      "Deployment": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "pending",
+              "building",
+              "active",
+              "failed"
+            ],
+            "example": "active"
+          },
+          "url": {
+            "type": "string",
+            "example": "https://my-app.cloudfuse.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      },
+      "CreateDeploymentDto": {
+        "type": "object",
+        "properties": {
+          "appId": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "version": {
+            "type": "string",
+            "example": "1.0.0"
+          },
+          "environment": {
+            "type": "string",
+            "example": "production"
+          }
+        },
+        "required": [
+          "appId"
+        ]
+      },
+      "Container": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "123e4567-e89b-12d3-a456-426614174000"
+          },
+          "name": {
+            "type": "string",
+            "example": "my-container"
+          },
+          "containerId": {
+            "type": "string",
+            "example": "abc123def456"
+          },
+          "type": {
+            "type": "string",
+            "enum": [
+              "docker",
+              "kubernetes"
+            ],
+            "example": "docker"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "running",
+              "stopped",
+              "error"
+            ],
+            "example": "running"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    }
+  },
+  "tags": [
+    {
+      "name": "Authentication",
+      "description": "User authentication endpoints"
+    },
+    {
+      "name": "Applications",
+      "description": "Application management endpoints"
+    },
+    {
+      "name": "Deployments",
+      "description": "Deployment management endpoints"
+    },
+    {
+      "name": "Containers",
+      "description": "Container management endpoints"
+    },
+    {
+      "name": "Languages",
+      "description": "Programming language support endpoints"
+    }
+  ]
+}

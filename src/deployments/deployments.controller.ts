@@ -79,17 +79,25 @@ export class DeploymentsController {
   })
   async findAll(
     @Query() paginationQuery: PaginationQueryDto,
+    @Req() req: Request & { user: User },
     @Query('appId') appId?: string,
     @Query('status') status?: string,
-    @Req() req: Request & { user: User },
   ) {
+    const where: any = {
+      user: { id: req.user.id },
+    };
+
+    if (appId) {
+      where.app = { id: appId };
+    }
+
+    if (status) {
+      where.status = status;
+    }
+
     return this.deploymentsService.findAll({
       ...paginationQuery,
-      where: {
-        user: { id: req.user.id },
-        ...(appId && { app: { id: appId } }),
-        ...(status && { status }),
-      },
+      where,
     });
   }
 

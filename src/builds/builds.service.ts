@@ -1,5 +1,5 @@
 import { Injectable, Logger } from '@nestjs/common';
-import Docker from 'dockerode';
+import * as Docker from 'dockerode';
 import { ConfigService } from '@nestjs/config';
 import { v4 as uuidv4 } from 'uuid';
 import * as fs from 'fs';
@@ -7,7 +7,7 @@ import * as path from 'path';
 import * as tar from 'tar-fs';
 import * as tmp from 'tmp';
 import { LanguagesService } from '@languages/services/languages.service';
-import { BuildResult } from '../interfaces/build-result.interface';
+import { BuildResult } from '../builds/interfaces/build-result.interface';
 
 @Injectable()
 export class BuildService {
@@ -51,8 +51,8 @@ export class BuildService {
 
       // Generate Dockerfile
       const dockerfileContent = await this.languagesService.generateDockerfile({
-        language,
-        version,
+        language: language as string,
+        version: version as string,
         framework: detectedConfig?.framework,
       });
       fs.writeFileSync(path.join(buildDir, 'Dockerfile'), dockerfileContent);
@@ -77,7 +77,7 @@ export class BuildService {
         version,
         framework: detectedConfig?.framework,
       };
-    } catch (error) {
+    } catch (error: any) {
       this.logger.error(`Error building image: ${error.message}`);
       return {
         success: false,

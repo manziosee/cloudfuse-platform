@@ -8,7 +8,7 @@ export class CreateContainerDto {
   })
   @IsNotEmpty()
   @IsString()
-  name: string;
+  name!: string;
 
   @ApiProperty({
     example: 'node:18',
@@ -16,7 +16,7 @@ export class CreateContainerDto {
   })
   @IsNotEmpty()
   @IsString()
-  image: string;
+  image!: string;
 
   @ApiProperty({
     example: 3000,

@@ -3,10 +3,9 @@ import { BuildService } from './builds.service';
 import { BuildsController } from './builds.controller';
 import { DockerService } from '@containers/docker.service';
 import { LanguagesService } from '@languages/services/languages.service';
-import { DeploymentsModule } from '@deployments/deployments.module';
 
 @Module({
-  imports: [DeploymentsModule],
+  imports: [],
   controllers: [BuildsController],
   providers: [BuildService, DockerService, LanguagesService],
   exports: [BuildService],

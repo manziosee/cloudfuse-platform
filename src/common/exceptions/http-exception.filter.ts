@@ -11,10 +11,20 @@ export class HttpExceptionFilter implements ExceptionFilter {
     const status = exception.getStatus();
     const exceptionResponse = exception.getResponse();
 
+    const errorCode =
+      typeof exceptionResponse === 'object' && exceptionResponse !== null && 'error' in exceptionResponse
+        ? (exceptionResponse as any).error
+        : ErrorCode.INTERNAL_ERROR;
+
+    const message =
+      typeof exceptionResponse === 'object' && exceptionResponse !== null && 'message' in exceptionResponse
+        ? (exceptionResponse as any).message
+        : ErrorMessage[ErrorCode.INTERNAL_ERROR];
+
     response.status(status).json({
       statusCode: status,
-      errorCode: exceptionResponse['error'] || ErrorCode.INTERNAL_ERROR,
-      message: exceptionResponse['message'] || ErrorMessage[ErrorCode.INTERNAL_ERROR],
+      errorCode,
+      message,
       timestamp: new Date().toISOString(),
       path: request.url,
     });

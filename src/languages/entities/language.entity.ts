@@ -3,16 +3,16 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity()
 export class Language {
   @PrimaryGeneratedColumn('uuid')
-  id: string;
+  id!: string;
 
   @Column({ unique: true })
-  name: string;
+  name!: string;
 
   @Column('simple-array')
-  versions: string[];
+  versions!: string[];
 
   @Column('json', { nullable: true })
-  metadata: {
+  metadata!: {
     dockerImagePattern?: string;
     defaultVersion?: string;
     packageManager?: string;

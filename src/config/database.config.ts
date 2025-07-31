@@ -15,4 +15,10 @@ export const getDatabaseConfig = async (
   logging: configService.get<string>('environment') === 'development',
   migrations: [__dirname + '/../migrations/*{.ts,.js}'],
   migrationsRun: true,
+  ssl: {
+    rejectUnauthorized: false,
+  },
+  extra: {
+    connectionLimit: 10,
+  },
 });
